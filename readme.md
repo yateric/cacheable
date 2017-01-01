@@ -4,7 +4,7 @@ Cacheable
 [![Build Status](https://img.shields.io/travis/yateric/cacheable/master.svg?style=flat-square)](https://travis-ci.org/yateric/cacheable)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![Total Downloads](https://img.shields.io/packagist/dt/yateric/cacheable.svg?style=flat-square)](https://packagist.org/packages/yateric/cacheable)
-[![Latest Version](https://img.shields.io/github/release/yateric/cacheable.svg?style=flat-square)](https://github.com/yateric/cacheable)
+[![Latest Version](https://img.shields.io/github/release/yateric/cacheable.svg?style=flat-square)](https://github.com/yateric/cacheable/releases)
 
 This standalone package makes any object method return cacheable by prepend a chainable method.
 
