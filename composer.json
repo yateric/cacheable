@@ -1,0 +1,34 @@
+{
+    "name": "yateric/cacheable",
+    "description": "Makes any object method return cacheable.",
+    "keywords": ["cacheable", "object", "laravel"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Eric Chow",
+            "email": "yateric@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/cache": "5.0.*|5.1.*|5.2.*|5.3.*|5.4.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8|^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Yateric\\Cacheable\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Yateric\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
