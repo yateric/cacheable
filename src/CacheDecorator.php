@@ -12,6 +12,7 @@
 namespace Yateric\Cacheable;
 
 use Illuminate\Contracts\Cache\Factory as FactoryContract;
+use Illuminate\Contracts\Cache\Repository as CacheContract;
 use Illuminate\Contracts\Cache\Store as CacheStoreContract;
 use Yateric\Cacheable\Exceptions\CacheStoreException;
 use Yateric\Cacheable\Exceptions\CacheStoreNotFoundException;
@@ -89,7 +90,7 @@ class CacheDecorator
             return self::$cacheStore;
         }
 
-        if ($laravelCacheManager = $this->getLaravelCacheManager()) {
+        if ($laravelCacheManager = $this->getLaravelCacheStore()) {
             self::$cacheStore = $laravelCacheManager;
 
             return self::$cacheStore;
@@ -99,11 +100,11 @@ class CacheDecorator
     }
 
     /**
-     * Try to get the Laravel cache manager
+     * Try to get the Laravel cache store
      *
-     * @return CacheStoreContract|false
+     * @return CacheContract|CacheStoreContract|false
      */
-    protected function getLaravelCacheManager()
+    protected function getLaravelCacheStore()
     {
         if (! function_exists('app')) {
             return false;
@@ -115,7 +116,7 @@ class CacheDecorator
             return false;
         }
 
-        return $cacheManager;
+        return $cacheManager->store();
     }
 
     /**
