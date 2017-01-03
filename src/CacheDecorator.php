@@ -79,47 +79,6 @@ class CacheDecorator
     }
 
     /**
-     * Get the cache store
-     *
-     * @return CacheStoreContract
-     * @throws CacheStoreNotFoundException
-     */
-    protected function getCacheStore()
-    {
-        if (self::$cacheStore) {
-            return self::$cacheStore;
-        }
-
-        if ($laravelCacheManager = $this->getLaravelCacheStore()) {
-            self::$cacheStore = $laravelCacheManager;
-
-            return self::$cacheStore;
-        }
-
-        throw new CacheStoreNotFoundException('Please set the cache store for cache decorator.');
-    }
-
-    /**
-     * Try to get the Laravel cache store
-     *
-     * @return CacheContract|CacheStoreContract|false
-     */
-    protected function getLaravelCacheStore()
-    {
-        if (! function_exists('app')) {
-            return false;
-        }
-
-        $cacheManager = app('cache');
-
-        if (! $cacheManager instanceof FactoryContract) {
-            return false;
-        }
-
-        return $cacheManager->store();
-    }
-
-    /**
      * Get the cache key which combined with prefix and hashed class name, method and parameters.
      *
      * @param  string  $method
@@ -198,6 +157,47 @@ class CacheDecorator
     }
 
     /**
+     * Get the cache store
+     *
+     * @return CacheStoreContract
+     * @throws CacheStoreNotFoundException
+     */
+    protected static function getCacheStore()
+    {
+        if (self::$cacheStore) {
+            return self::$cacheStore;
+        }
+
+        if ($laravelCacheManager = self::getLaravelCacheStore()) {
+            self::$cacheStore = $laravelCacheManager;
+
+            return self::$cacheStore;
+        }
+
+        throw new CacheStoreNotFoundException('Please set the cache store for cache decorator.');
+    }
+
+    /**
+     * Try to get the Laravel cache store
+     *
+     * @return CacheContract|CacheStoreContract|false
+     */
+    protected static function getLaravelCacheStore()
+    {
+        if (! function_exists('app')) {
+            return false;
+        }
+
+        $cacheManager = app('cache');
+
+        if (! $cacheManager instanceof FactoryContract) {
+            return false;
+        }
+
+        return $cacheManager->store();
+    }
+
+    /**
      * Set the cache store
      *
      * @param  CacheStoreContract $cacheStore
@@ -241,7 +241,7 @@ class CacheDecorator
      */
     public function __call($method, $parameters)
     {
-        $cacheStore = $this->getCacheStore();
+        $cacheStore = self::getCacheStore();
         $cacheKey = $this->getCacheKey($method, $parameters);
 
         if ($value = $cacheStore->get($cacheKey)) {
