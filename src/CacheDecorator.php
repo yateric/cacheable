@@ -233,6 +233,18 @@ class CacheDecorator
     }
 
     /**
+     * Flush the cache store
+     *
+     * @return void
+     */
+    public static function flush()
+    {
+        $cacheStore = static::getCacheStore();
+
+        $cacheStore->flush();
+    }
+
+    /**
      * Handle dynamic method calls into the cache decorator.
      *
      * @param  string  $method

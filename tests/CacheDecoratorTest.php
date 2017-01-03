@@ -132,4 +132,20 @@ class CacheDecoratorTest extends TestCase
             'Yateric\Tests\Stubs\DecoratedObjectstaticMethod["test"]'
         )));
     }
+
+    public function test_it_can_flush_the_cache_store()
+    {
+        $arrayStore = new ArrayStore;
+        CacheDecorator::setCacheStore($arrayStore);
+
+        $this->assertEmpty($arrayStore->storage);
+
+        $decoratedObject = new DecoratedObject;
+        $decoratedObject->cache()->nonStaticMethod();
+
+        $this->assertNotEmpty($arrayStore->storage);
+
+        CacheDecorator::flush();
+        $this->assertEmpty($arrayStore->storage);
+    }
 }

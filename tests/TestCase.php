@@ -26,5 +26,6 @@ class TestCase extends PHPUnit_Framework_TestCase
     {
         CacheDecorator::setCachePrefix('');
         CacheDecorator::setGlobalCacheMinutes(60);
+        CacheDecorator::flush();
     }
 }
