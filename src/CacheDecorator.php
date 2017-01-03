@@ -20,6 +20,8 @@ use Yateric\Cacheable\Exceptions\NotObjectException;
 
 class CacheDecorator
 {
+    const GLOBAL_CACHE_MINUTES = 60;
+
     /**
      * Decorated object or full namespace of the decorated class.
      *
@@ -42,7 +44,7 @@ class CacheDecorator
     protected $cacheMinutes;
 
     /**
-     * Cache store
+     * Underlying cache store.
      *
      * @var CacheStoreContract
      */
@@ -60,7 +62,7 @@ class CacheDecorator
      *
      * @var int
      */
-    protected static $globalCacheMinutes = 60;
+    protected static $globalCacheMinutes = self::GLOBAL_CACHE_MINUTES;
 
     /**
      * Create a new cache decorator instance.
@@ -89,17 +91,7 @@ class CacheDecorator
     {
         $parameters = json_encode($parameters);
 
-        return $this->getCachePrefix() . hash('sha256', "{$this->getClassName()}{$method}{$parameters}");
-    }
-
-    /**
-     * Get the cache key prefix.
-     *
-     * @return string
-     */
-    protected function getCachePrefix()
-    {
-        return static::$cachePrefix;
+        return static::getCachePrefix() . hash('sha256', "{$this->getClassName()}{$method}{$parameters}");
     }
 
     /**
@@ -157,7 +149,7 @@ class CacheDecorator
     }
 
     /**
-     * Get the cache store
+     * Get the cache store.
      *
      * @return CacheStoreContract
      * @throws CacheStoreNotFoundException
@@ -178,7 +170,7 @@ class CacheDecorator
     }
 
     /**
-     * Try to get the Laravel cache store
+     * Try to get the Laravel cache store.
      *
      * @return CacheContract|CacheStoreContract|false
      */
@@ -198,7 +190,7 @@ class CacheDecorator
     }
 
     /**
-     * Set the cache store
+     * Set the cache store.
      *
      * @param  CacheStoreContract $cacheStore
      * @throws CacheStoreException
@@ -213,6 +205,16 @@ class CacheDecorator
     }
 
     /**
+     * Get the cache key prefix.
+     *
+     * @return string
+     */
+    public static function getCachePrefix()
+    {
+        return static::$cachePrefix;
+    }
+
+    /**
      * Set the cache key prefix.
      *
      * @param  string  $prefix
@@ -220,6 +222,16 @@ class CacheDecorator
      */
     public static function setCachePrefix($prefix) {
         static::$cachePrefix = $prefix;
+    }
+
+    /**
+     * Get the global cache minutes for all cache decorators.
+     *
+     * @return int
+     */
+    public static function getGlobalCacheMinutes()
+    {
+        return static::$globalCacheMinutes;
     }
 
     /**
@@ -233,7 +245,7 @@ class CacheDecorator
     }
 
     /**
-     * Flush the cache store
+     * Flush the cache store.
      *
      * @return void
      */
@@ -242,6 +254,18 @@ class CacheDecorator
         $cacheStore = static::getCacheStore();
 
         $cacheStore->flush();
+    }
+
+    /**
+     * Reset the cache decorator static states.
+     *
+     * @return void
+     */
+    public static function reset()
+    {
+        static::setCachePrefix('');
+        static::setGlobalCacheMinutes(static::GLOBAL_CACHE_MINUTES);
+        static::flush();
     }
 
     /**

@@ -53,8 +53,7 @@ class CacheDecoratorTest extends TestCase
         $cacheMinutesAfterCall = $cacheDecorator->getCacheMinutes();
 
         $this->assertEquals(123, $cacheMinutesBeforeCall);
-        // Default global cache minutes is 60
-        $this->assertEquals(60, $cacheMinutesAfterCall);
+        $this->assertEquals(CacheDecorator::GLOBAL_CACHE_MINUTES, $cacheMinutesAfterCall);
     }
 
     public function test_it_can_get_instance_default_cache_minutes()
@@ -67,14 +66,22 @@ class CacheDecoratorTest extends TestCase
         $this->assertEquals(123, $cacheDecorator->getCacheMinutes());
     }
 
-    public function test_it_can_get_global_cache_minutes()
+    public function test_it_can_set_cache_prefix()
     {
-        $decoratedObject = new DecoratedObject;
-        $cacheDecorator = $decoratedObject->cache();
+        $this->assertEquals('', CacheDecorator::getCachePrefix());
+
+        CacheDecorator::setCachePrefix('prefix');
+
+        $this->assertEquals('prefix', CacheDecorator::getCachePrefix());
+    }
+
+    public function test_it_can_set_global_cache_minutes()
+    {
+        $this->assertEquals(60, CacheDecorator::getGlobalCacheMinutes());
 
         CacheDecorator::setGlobalCacheMinutes(123);
 
-        $this->assertEquals(123, $cacheDecorator->getCacheMinutes());
+        $this->assertEquals(123, CacheDecorator::getGlobalCacheMinutes());
     }
 
     public function test_it_throw_exception_if_cache_store_not_implement_store_contract()
@@ -89,7 +96,7 @@ class CacheDecoratorTest extends TestCase
         $this->fail('It should throw the CacheStoreException if the cache store is not implementing [' . Store::class . '] contract.');
     }
 
-    public function test_it_can_set_cache_prefix()
+    public function test_it_use_the_correct_cache_key()
     {
         $arrayStore = new ArrayStore;
         CacheDecorator::setCacheStore($arrayStore);
@@ -98,9 +105,9 @@ class CacheDecoratorTest extends TestCase
         $decoratedObject = new DecoratedObject;
         $cacheDecorator = $decoratedObject->cache();
 
-        $nonStaticMethodReturn = $cacheDecorator->nonStaticMethod();
+        $cacheDecorator->nonStaticMethod();
 
-        $this->assertEquals($nonStaticMethodReturn, $arrayStore->get(
+        $this->assertNotEmpty($arrayStore->get(
             'prefix_' . hash('sha256', 'Yateric\Tests\Stubs\DecoratedObjectnonStaticMethod[]')
         ));
     }
@@ -147,5 +154,16 @@ class CacheDecoratorTest extends TestCase
 
         CacheDecorator::flush();
         $this->assertEmpty($arrayStore->storage);
+    }
+
+    public function test_it_can_reset_cache_decorator_static_states()
+    {
+        CacheDecorator::setCachePrefix('test_prefix');
+        CacheDecorator::setGlobalCacheMinutes(123);
+
+        CacheDecorator::reset();
+
+        $this->assertEquals('', CacheDecorator::getCachePrefix());
+        $this->assertEquals(CacheDecorator::GLOBAL_CACHE_MINUTES, CacheDecorator::getGlobalCacheMinutes());
     }
 }
