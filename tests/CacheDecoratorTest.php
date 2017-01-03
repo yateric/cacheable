@@ -145,15 +145,21 @@ class CacheDecoratorTest extends TestCase
         $arrayStore = new ArrayStore;
         CacheDecorator::setCacheStore($arrayStore);
 
-        $this->assertEmpty($arrayStore->storage);
+        $this->assertEmpty($arrayStore->get(hash('sha256',
+            'Yateric\Tests\Stubs\DecoratedObjectnonStaticMethod[]'
+        )));
 
         $decoratedObject = new DecoratedObject;
         $decoratedObject->cache()->nonStaticMethod();
+        $this->assertNotEmpty($arrayStore->get(hash('sha256',
+            'Yateric\Tests\Stubs\DecoratedObjectnonStaticMethod[]'
+        )));
 
-        $this->assertNotEmpty($arrayStore->storage);
 
         CacheDecorator::flush();
-        $this->assertEmpty($arrayStore->storage);
+        $this->assertEmpty($arrayStore->get(hash('sha256',
+            'Yateric\Tests\Stubs\DecoratedObjectnonStaticMethod[]'
+        )));
     }
 
     public function test_it_can_reset_cache_decorator_static_states()
