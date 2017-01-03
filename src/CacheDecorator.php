@@ -99,7 +99,7 @@ class CacheDecorator
      */
     protected function getCachePrefix()
     {
-        return self::$cachePrefix;
+        return static::$cachePrefix;
     }
 
     /**
@@ -127,7 +127,7 @@ class CacheDecorator
             return $this->defaultCacheMinutes;
         }
 
-        return self::$globalCacheMinutes;
+        return static::$globalCacheMinutes;
     }
 
     /**
@@ -164,14 +164,14 @@ class CacheDecorator
      */
     protected static function getCacheStore()
     {
-        if (self::$cacheStore) {
-            return self::$cacheStore;
+        if (static::$cacheStore) {
+            return static::$cacheStore;
         }
 
-        if ($laravelCacheManager = self::getLaravelCacheStore()) {
-            self::$cacheStore = $laravelCacheManager;
+        if ($laravelCacheManager = static::getLaravelCacheStore()) {
+            static::$cacheStore = $laravelCacheManager;
 
-            return self::$cacheStore;
+            return static::$cacheStore;
         }
 
         throw new CacheStoreNotFoundException('Please set the cache store for cache decorator.');
@@ -209,7 +209,7 @@ class CacheDecorator
             throw new CacheStoreException('Cache store must implement [' . CacheStoreContract::class . '] contract');
         }
 
-        self::$cacheStore = $cacheStore;
+        static::$cacheStore = $cacheStore;
     }
 
     /**
@@ -219,7 +219,7 @@ class CacheDecorator
      * @return void
      */
     public static function setCachePrefix($prefix) {
-        self::$cachePrefix = $prefix;
+        static::$cachePrefix = $prefix;
     }
 
     /**
@@ -229,7 +229,7 @@ class CacheDecorator
      * @return void
      */
     public static function setGlobalCacheMinutes($minutes) {
-        self::$globalCacheMinutes = $minutes;
+        static::$globalCacheMinutes = $minutes;
     }
 
     /**
@@ -241,7 +241,7 @@ class CacheDecorator
      */
     public function __call($method, $parameters)
     {
-        $cacheStore = self::getCacheStore();
+        $cacheStore = static::getCacheStore();
         $cacheKey = $this->getCacheKey($method, $parameters);
 
         if ($value = $cacheStore->get($cacheKey)) {
